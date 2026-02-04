@@ -1,1 +1,5 @@
-chat-webhook-url: "PUT_WEBHOOK_HERE"
+discord: # optional
+  chat: # optional
+    webhook-url: "PUT_WEBHOOK_HERE"
+  join-leave: # optional
+    webhook-url: "PUT_WEBHOOK_HERE"
