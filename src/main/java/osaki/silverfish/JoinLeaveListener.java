@@ -2,7 +2,9 @@ package osaki.silverfish;
 
 import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,12 +21,14 @@ import java.util.List;
 public class JoinLeaveListener implements Listener {
     private final JavaPlugin plugin;
     private final String webhookUrl;
+    private final String discordInvite;
 
     private final List<Pair<String, Instant>> joinTimestamp = new ArrayList<>();
 
     public JoinLeaveListener(Silverfish plugin) {
         this.plugin = plugin;
         this.webhookUrl = plugin.joinLeaveWebhookUrl;
+        this.discordInvite = plugin.discordInvite;
     }
 
     @EventHandler
@@ -35,16 +39,25 @@ public class JoinLeaveListener implements Listener {
         Component joinMessage = Component.text(player_name, NamedTextColor.GREEN)
                 .append(Component.text(" joined the game", NamedTextColor.YELLOW));
         event.joinMessage(joinMessage);
-        player.sendMessage("Silverfish: Yo!");
+        if (discordInvite != null)
+            plugin.getServer().getScheduler().runTask(plugin, () -> { // delay after join event
+                Component clickableMessage = Component.text("Click here to join our Discord!")
+                        .color(NamedTextColor.BLUE)
+                        .decorate(TextDecoration.UNDERLINED)
+                        .clickEvent(ClickEvent.openUrl(discordInvite))
+                        .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(
+                                Component.text("Opens your browser!")
+                        ));
+                player.sendMessage(clickableMessage);
+            });
 
         joinTimestamp.add(Pair.of(player_name, Instant.now()));
 
         if (webhookUrl == null) return;
-        Util.SendWebhook(player_name + " joined the server!", webhookUrl, plugin.getLogger());
+        Util.SendWebhook("**" + player_name + "** joined the server!", webhookUrl, plugin.getLogger());
         Collection<? extends Player> onlinePlayers = plugin.getServer().getOnlinePlayers();
         if (onlinePlayers.size() == 1) {
-            Util.SendWebhook(player_name + " is alone!", webhookUrl, plugin.getLogger());
-            // ping role
+            Util.SendWebhook("@everyone **" + player_name + "** is all alone, care to join them?", webhookUrl, plugin.getLogger());
         }
     }
 
@@ -53,8 +66,8 @@ public class JoinLeaveListener implements Listener {
         Player player = event.getPlayer();
         String player_name = player.getName();
 
-        Component quitMessage = Component.text(player_name, NamedTextColor.GREEN)
-                .append(Component.text(" left the game", NamedTextColor.RED));
+        Component quitMessage = Component.text(player_name, NamedTextColor.RED)
+                .append(Component.text(" left the game", NamedTextColor.YELLOW));
         event.quitMessage(quitMessage);
 
         Pair<String, Instant> found = null;
@@ -88,6 +101,6 @@ public class JoinLeaveListener implements Listener {
         }
         if (minutes > 0) sb.append(minutes).append("m");
         if (hours == 0 && minutes == 0) sb.append(seconds).append("s");
-        Util.SendWebhook(player_name + " left the server after `" + sb.toString().trim() + "`!", webhookUrl, plugin.getLogger());
+        Util.SendWebhook("**" + player_name + "** left the server after **" + sb.toString().trim() + "**", webhookUrl, plugin.getLogger());
     }
 }

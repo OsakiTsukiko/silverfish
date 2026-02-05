@@ -1,4 +1,5 @@
 discord: # optional
+  invite: "PUT_INVITE_URL_HERE" # optional
   chat: # optional
     webhook-url: "PUT_WEBHOOK_HERE"
   join-leave: # optional

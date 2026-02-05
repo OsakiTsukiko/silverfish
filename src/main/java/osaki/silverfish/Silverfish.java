@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Silverfish extends JavaPlugin {
     public String chatWebhookUrl = null;
     public String joinLeaveWebhookUrl = null;
+    public String discordInvite = null;
 
     @Override
     public void onEnable() {
@@ -14,6 +15,11 @@ public final class Silverfish extends JavaPlugin {
         if (getConfig().contains("discord", true)) {
             ConfigurationSection discordSection = getConfig().getConfigurationSection("discord");
             assert discordSection != null; // should be unreachable
+            String invite = discordSection.getString("invite");
+            if (invite != null && (invite.isBlank() || invite.equals("PUT_INVITE_URL_HERE")))
+                getLogger().severe("discord.invite is missing from config.yaml");
+            else discordInvite = invite;
+
             if (discordSection.contains("chat", true)) {
                 ConfigurationSection chat = discordSection.getConfigurationSection("chat");
                 assert chat != null; // should be unreachable
@@ -29,7 +35,7 @@ public final class Silverfish extends JavaPlugin {
                 assert join_leave != null; // should be unreachable
                 String webhook_url = join_leave.getString("webhook-url");
                 if (!Util.ValidateWehbook(webhook_url)) {
-                    getLogger().severe("discord.join_leave.webhook-url is missing from config.yaml");
+                    getLogger().severe("discord.join-leave.webhook-url is missing from config.yaml");
                 }
                 joinLeaveWebhookUrl = webhook_url;
             }
