@@ -53,12 +53,13 @@ public class JoinLeaveListener implements Listener {
 
         joinTimestamp.add(Pair.of(player_name, Instant.now()));
 
-        if (webhookUrl == null) return;
-        Util.SendWebhook("**" + player_name + "** joined the server!", webhookUrl, plugin.getLogger());
-        Collection<? extends Player> onlinePlayers = plugin.getServer().getOnlinePlayers();
-        if (onlinePlayers.size() == 1) {
-            Util.SendWebhook("@everyone **" + player_name + "** is all alone, care to join them?", webhookUrl, plugin.getLogger());
-        }
+        if (webhookUrl != null) plugin.getServer().getAsyncScheduler().runNow(plugin, task -> {
+            Util.SendWebhook("**" + player_name + "** joined the server!", webhookUrl, plugin.getLogger());
+            Collection<? extends Player> onlinePlayers = plugin.getServer().getOnlinePlayers();
+            if (onlinePlayers.size() == 1) {
+                Util.SendWebhook("@everyone **" + player_name + "** is all alone, care to join them?", webhookUrl, plugin.getLogger());
+            }
+        });
     }
 
     @EventHandler
@@ -94,13 +95,14 @@ public class JoinLeaveListener implements Listener {
         long minutes = elapsed.toMinutes() % 60;
         long seconds = elapsed.getSeconds() % 60;
 
-        if (webhookUrl == null) return;
-        StringBuilder sb = new StringBuilder();
-        if (hours > 0) {
-            sb.append(hours).append("h ");
-        }
-        if (minutes > 0) sb.append(minutes).append("m");
-        if (hours == 0 && minutes == 0) sb.append(seconds).append("s");
-        Util.SendWebhook("**" + player_name + "** left the server after **" + sb.toString().trim() + "**", webhookUrl, plugin.getLogger());
+        if (webhookUrl != null) plugin.getServer().getAsyncScheduler().runNow(plugin, task -> {
+            StringBuilder sb = new StringBuilder();
+            if (hours > 0) {
+                sb.append(hours).append("h ");
+            }
+            if (minutes > 0) sb.append(minutes).append("m");
+            if (hours == 0 && minutes == 0) sb.append(seconds).append("s");
+            Util.SendWebhook("**" + player_name + "** left the server after **" + sb.toString().trim() + "**", webhookUrl, plugin.getLogger());
+        });
     }
 }

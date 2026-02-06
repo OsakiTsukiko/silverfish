@@ -3,10 +3,16 @@ package osaki.silverfish;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public final class Silverfish extends JavaPlugin {
     public String chatWebhookUrl = null;
     public String joinLeaveWebhookUrl = null;
     public String discordInvite = null;
+
+    public final Map<UUID, UUID> tpaRequests = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -43,6 +49,10 @@ public final class Silverfish extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinLeaveListener(this), this);
+
+        getCommand("tpa").setExecutor(new TpaCommand(this));
+        getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));
+        getCommand("tpdeny").setExecutor(new TpDenyCommand(this));
 
         getLogger().info("Silverfish enabled!");
     }

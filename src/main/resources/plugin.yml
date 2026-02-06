@@ -1,4 +1,17 @@
 name: silverfish
-version: '1.0.3'
+version: '1.0.5'
 main: osaki.silverfish.Silverfish
 api-version: '1.21'
+
+commands:
+  tpa:
+    description: Send teleport request
+    usage: /tpa <player>
+
+  tpaccept:
+    description: Accept teleport request
+    usage: /tpaccept <player>
+
+  tpdeny:
+    description: Deny teleport request
+    usage: /tpdeny <player>

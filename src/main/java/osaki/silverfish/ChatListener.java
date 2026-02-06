@@ -22,7 +22,8 @@ public class ChatListener implements Listener {
         String senderName = sender.getName();
         String message = PlainTextComponentSerializer.plainText().serialize(event.message());
         String discordMessage = "**" + senderName + "**: " + message;
-        if (webhookUrl == null) return;
-        Util.SendWebhook(discordMessage, webhookUrl, plugin.getLogger());
+        if (webhookUrl != null) plugin.getServer().getAsyncScheduler().runNow(plugin, task -> {
+            Util.SendWebhook(discordMessage, webhookUrl, plugin.getLogger());
+        });
     }
 }
