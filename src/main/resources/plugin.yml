@@ -1,5 +1,5 @@
 name: silverfish
-version: '1.0.7'
+version: ${version}
 main: osaki.silverfish.Silverfish
 api-version: '1.21'
 
@@ -21,3 +21,7 @@ commands:
     usage: /suicide
     aliases:
       - kms
+
+  afk:
+    description: Go into AFK mode
+    usage: /afk

@@ -14,6 +14,8 @@ public final class Silverfish extends JavaPlugin {
 
     public final Map<UUID, UUID> tpaRequests = new HashMap<>();
 
+    private AfkManager afkManager;
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -52,17 +54,22 @@ public final class Silverfish extends JavaPlugin {
         SuicideListener suicideListener = new SuicideListener();
         getServer().getPluginManager().registerEvents(suicideListener, this);
         getServer().getPluginManager().registerEvents(new SleepListener(this), this);
+        afkManager = new AfkManager(this);
+        getServer().getPluginManager().registerEvents(afkManager, this);
 
         getCommand("tpa").setExecutor(new TpaCommand(this));
         getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));
         getCommand("tpdeny").setExecutor(new TpDenyCommand(this));
         getCommand("suicide").setExecutor(new SuicideCommand(suicideListener));
+        getCommand("afk").setExecutor(new AfkCommand(afkManager));
 
         getLogger().info("Silverfish enabled!");
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if (afkManager != null) {
+            afkManager.removeAllAfkOnDisable();
+        }
     }
 }
