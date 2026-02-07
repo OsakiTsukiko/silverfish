@@ -5,5 +5,5 @@
 - [X] suicide
 - [X] tpa (tpaccept/tpdeny)
 - [X] one player sleep
-- [ ] afk
+- [X] afk
 - [ ] waypoints
