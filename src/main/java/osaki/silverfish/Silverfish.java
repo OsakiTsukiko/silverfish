@@ -51,6 +51,7 @@ public final class Silverfish extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new JoinLeaveListener(this), this);
         SuicideListener suicideListener = new SuicideListener();
         getServer().getPluginManager().registerEvents(suicideListener, this);
+        getServer().getPluginManager().registerEvents(new SleepListener(this), this);
 
         getCommand("tpa").setExecutor(new TpaCommand(this));
         getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));

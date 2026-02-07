@@ -1,5 +1,5 @@
 name: silverfish
-version: '1.0.6'
+version: '1.0.7'
 main: osaki.silverfish.Silverfish
 api-version: '1.21'
 
