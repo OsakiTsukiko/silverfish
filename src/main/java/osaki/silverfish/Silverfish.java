@@ -49,10 +49,13 @@ public final class Silverfish extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinLeaveListener(this), this);
+        SuicideListener suicideListener = new SuicideListener();
+        getServer().getPluginManager().registerEvents(suicideListener, this);
 
         getCommand("tpa").setExecutor(new TpaCommand(this));
         getCommand("tpaccept").setExecutor(new TpAcceptCommand(this));
         getCommand("tpdeny").setExecutor(new TpDenyCommand(this));
+        getCommand("suicide").setExecutor(new SuicideCommand(suicideListener));
 
         getLogger().info("Silverfish enabled!");
     }

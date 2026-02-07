@@ -1,5 +1,5 @@
 name: silverfish
-version: '1.0.5'
+version: '1.0.6'
 main: osaki.silverfish.Silverfish
 api-version: '1.21'
 
@@ -15,3 +15,9 @@ commands:
   tpdeny:
     description: Deny teleport request
     usage: /tpdeny <player>
+
+  suicide:
+    description: Commit suicide
+    usage: /suicide
+    aliases:
+      - kms
