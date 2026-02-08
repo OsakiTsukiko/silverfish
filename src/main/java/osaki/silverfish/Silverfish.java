@@ -3,6 +3,10 @@ package osaki.silverfish;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +19,9 @@ public final class Silverfish extends JavaPlugin {
     public final Map<UUID, UUID> tpaRequests = new HashMap<>();
 
     private AfkManager afkManager;
+
+    private Connection connection;
+    private WaypointDB waypointDB;
 
     @Override
     public void onEnable() {
@@ -49,6 +56,19 @@ public final class Silverfish extends JavaPlugin {
             }
         }
 
+        try {
+            if (!getDataFolder().exists()) getDataFolder().mkdirs();
+
+            File dbFile = new File(getDataFolder(), "waypoints.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+
+            waypointDB = new WaypointDB(connection, this);
+            waypointDB.createTables();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinLeaveListener(this), this);
         SuicideListener suicideListener = new SuicideListener();
@@ -63,6 +83,12 @@ public final class Silverfish extends JavaPlugin {
         getCommand("suicide").setExecutor(new SuicideCommand(suicideListener));
         getCommand("afk").setExecutor(new AfkCommand(afkManager));
 
+        WaypointCommands wp_cmds = new WaypointCommands(waypointDB, this);
+        getCommand("wp").setExecutor(wp_cmds);
+        getCommand("wpset").setExecutor(wp_cmds);
+        getCommand("wpdel").setExecutor(wp_cmds);
+        getCommand("wpls").setExecutor(wp_cmds);
+
         getLogger().info("Silverfish enabled!");
     }
 
@@ -70,6 +96,12 @@ public final class Silverfish extends JavaPlugin {
     public void onDisable() {
         if (afkManager != null) {
             afkManager.removeAllAfkOnDisable();
+        }
+
+        try {
+            if (connection != null) connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

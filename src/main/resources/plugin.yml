@@ -25,3 +25,19 @@ commands:
   afk:
     description: Go into AFK mode
     usage: /afk
+
+  wp:
+    description: Teleport to a waypoint
+    usage: /wp <waypoint-name>
+
+  wpset:
+    description: Set waypoint
+    usage: /wpset <waypoint-name>
+
+  wpdel:
+    description: Delete waypoint
+    usage: /wpdel <waypoint-name>
+
+  wpls:
+    description: List waypoints
+    usage: /wpls
